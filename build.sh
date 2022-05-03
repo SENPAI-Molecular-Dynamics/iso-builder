@@ -107,3 +107,14 @@ if [ $? -ne 0 ]; then
 else
 	echo -e "${TEXT_SUCC} Extracted the AlmaLinux ISO"
 fi
+
+
+
+# Patch the ISO
+cp -r ${ISO_PATCH_PATH}/* ${NEW_ISO_ROOT}/
+if [ $? -ne 0 ]; then
+	echo -e "${TEXT_FAIL} Failed to patch the AlmaLinux ISO"
+	exit 255
+else
+	echo -e "${TEXT_SUCC} Patched the AlmaLinux ISO"
+fi
