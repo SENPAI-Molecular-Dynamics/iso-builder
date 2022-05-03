@@ -26,6 +26,21 @@ TEXT_SUCC="[  ${TEXT_GREEN}OK${TEXT_RESET}  ]"
 
 
 
+# Print the banner
+echo '   _____ ______ _   _ _____        _____ '
+echo '  / ____|  ____| \ | |  __ \ /\   |_   _|'
+echo ' | (___ | |__  |  \| | |__) /  \    | |  '
+echo '  \___ \|  __| | . ` |  ___/ /\ \   | |  '
+echo '  ____) | |____| |\  | |  / ____ \ _| |_ '
+echo ' |_____/|______|_| \_|_| /_/    \_\_____|'
+echo ' '
+echo -e "${TEXT_GREEN}Building script${TEXT_RESET}"
+echo "=> Builds a SENPAI installation ISO from AlmaLinux 8.5"
+echo "=> AlmaLinux: https://almalinux.org/"
+echo ' '
+
+
+
 ####
 #### VARIABLES
 ####
