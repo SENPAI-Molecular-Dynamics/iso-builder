@@ -42,9 +42,10 @@ ALMA_LOCAL_DIR="./AlmaLinux"
 ALMA_LOCAL_NAME="AlmaLinux-${ALMA_RELEASE}-${ALMA_ARCH}-${ALMA_FLAVOR}.iso"
 ALMA_LOCAL="${ALMA_LOCAL_DIR}/${ALMA_LOCAL_NAME}"
 
-LOGFILE="./buildlog.txt" # Where this script will log stuff
-TMPDIR=""                # The temporary work directory
-NEW_ISO_ROOT="isoroot"   # The root of the new ISO to build. Subdir of TMPDIR
+LOGFILE="./buildlog.txt"     # Where this script will log stuff
+TMPDIR=""                    # The temporary work directory
+NEW_ISO_ROOT="isoroot"       # The root of the new ISO to build. Subdir of TMPDIR
+ISO_PATCH_PATH="./iso-patch" # The content of the directory will be copied to the root of the ISO before building
 
 ####
 ####
