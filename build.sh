@@ -42,12 +42,18 @@ ALMA_LOCAL_DIR="./AlmaLinux"
 ALMA_LOCAL_NAME="AlmaLinux-${ALMA_RELEASE}-${ALMA_ARCH}-${ALMA_FLAVOR}.iso"
 ALMA_LOCAL="${ALMA_LOCAL_DIR}/${ALMA_LOCAL_NAME}"
 
-# Temporary directory to work in
-TMPDIR=""
+LOGFILE="./buildlog.txt" # Where this script will log stuff
+TMPDIR=""                # The temporary work directory
+NEW_ISO_ROOT="isoroot"   # The root of the new ISO to build. Subdir of TMPDIR
 
 ####
 ####
 ####
+
+
+
+# Clear the build log file
+echo "===Buildlog===" > ${LOGFILE}
 
 
 
@@ -80,4 +86,23 @@ TMPDIR=`mktemp -d`
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Failed to create temporary directory"
 	exit 255
+else
+	echo -e "${TEXT_SUCC} Created temporary work directory: ${TMPDIR}"
+fi
+
+
+
+# Create the subdir to be used as the new ISO root
+mkdir ${TMPDIR}/${NEW_ISO_ROOT}
+NEW_ISO_ROOT="${TMPDIR}/${NEW_ISO_ROOT}"
+
+
+
+# Extract the AlmaLinux ISO to the temporary directory
+xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT}
+if [ $? -ne 0 ]; then
+	echo -e "${TEXT_FAIL} Failed to extract AlmaLinux ISO"
+	exit 255
+else
+	echo -e "${TEXT_SUCC} Extracted the AlmaLinux ISO"
 fi
