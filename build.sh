@@ -42,10 +42,33 @@ ALMA_LOCAL_DIR="./AlmaLinux"
 ALMA_LOCAL_NAME="AlmaLinux-${ALMA_RELEASE}-${ALMA_ARCH}-${ALMA_FLAVOR}.iso"
 ALMA_LOCAL="${ALMA_LOCAL_DIR}/${ALMA_LOCAL_NAME}"
 
-LOGFILE="./buildlog.txt"     # Where this script will log stuff
-TMPDIR=""                    # The temporary work directory
-NEW_ISO_ROOT="isoroot"       # The root of the new ISO to build. Subdir of TMPDIR
-ISO_PATCH_PATH="./iso-patch" # The content of the directory will be copied to the root of the ISO before building
+LOGFILE="./buildlog.txt"         # Where this script will log stuff
+TMPDIR=`mktemp -d`               # The temporary work directory
+NEW_ISO_ROOT="${TMPDIR}/isoroot" # The root of the new ISO to build. Subdir of TMPDIR
+ISO_PATCH_PATH="./iso-patch"     # The content of the directory will be copied to the root of the ISO before building
+
+# Information regarding the to-be-built SENPAI ISO
+SENPAI_ISO_VERSION="8.5"
+SENPAI_ISO_RELEASE="1"
+SENPAI_ISO_ARCH="x86_64"
+SENPAI_ISO_NAME="SENPAI-${SENPAI_ISO_VERSION}-${SENPAI_ISO_RELEASE}-${SENPAI_ISO_ARCH}.iso"
+SENPAI_ISO_DIR="./build"
+SENPAI_ISO="${SENPAI_ISO_DIR}/${SENPAI_ISO_NAME}"
+
+# Those are the flags used to rebuild the ISO image
+XORRISO_FLAGS="-as mkisofs \
+		-isohybrid-mbr /usr/lib/syslinux/mbr/isohdpfx.bin \
+		-c isolinux/boot.cat \
+		-b isolinux/isolinux.bin \
+		-no-emul-boot \
+		-boot-load-size 4 \
+		-boot-info-table \
+		-eltorito-alt-boot \
+		-e boot/grub/efi.img \
+		-no-emul-boot \
+		-isohybrid-gpt-basdat \
+		-o ${SENPAI_ISO} \
+		${NEW_ISO_ROOT}"
 
 ####
 ####
@@ -82,20 +105,14 @@ fi
 
 
 
-# Create a temporary directory to work in
-TMPDIR=`mktemp -d`
+# Create the new ISO root dir in the tmpdir
+mkdir ${NEW_ISO_ROOT}
 if [ $? -ne 0 ]; then
-	echo -e "${TEXT_FAIL} Failed to create temporary directory"
-	exit 255
+        echo -e "${TEXT_FAIL} Created new ISO root directory"
+        exit 255
 else
-	echo -e "${TEXT_SUCC} Created temporary work directory: ${TMPDIR}"
+        echo -e "${TEXT_SUCC} Failed to create new ISO root directory"
 fi
-
-
-
-# Create the subdir to be used as the new ISO root
-mkdir ${TMPDIR}/${NEW_ISO_ROOT}
-NEW_ISO_ROOT="${TMPDIR}/${NEW_ISO_ROOT}"
 
 
 
@@ -118,3 +135,16 @@ if [ $? -ne 0 ]; then
 else
 	echo -e "${TEXT_SUCC} Patched the AlmaLinux ISO"
 fi
+
+
+
+# Check if the build folder exists
+if [ ! -d ${SENPAI_ISO_DIR} ]; then
+	echo -e "${TEXT_INFO} Creating the build folder"
+        mkdir ${SENPAI_ISO_DIR}
+fi
+
+
+
+# Rebuild a bootable ISO
+xorriso ${XORRISO_FLAGS}
