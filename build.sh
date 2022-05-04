@@ -72,7 +72,6 @@ SENPAI_ISO="${SENPAI_ISO_DIR}/${SENPAI_ISO_NAME}"
 
 # Those are the flags used to rebuild the ISO image
 XORRISO_FLAGS="-as mkisofs \
-		-isohybrid-mbr /usr/lib/syslinux/mbr/isohdpfx.bin \
 		-c isolinux/boot.cat \
 		-b isolinux/isolinux.bin \
 		-no-emul-boot \
@@ -123,10 +122,10 @@ fi
 # Create the new ISO root dir in the tmpdir
 mkdir ${NEW_ISO_ROOT}
 if [ $? -ne 0 ]; then
-        echo -e "${TEXT_FAIL} Created new ISO root directory"
+        echo -e "${TEXT_FAIL} Failed to create new ISO root directory"
         exit 255
 else
-        echo -e "${TEXT_SUCC} Failed to create new ISO root directory"
+        echo -e "${TEXT_SUCC} Created new ISO root directory"
 fi
 
 
