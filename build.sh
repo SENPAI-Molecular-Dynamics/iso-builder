@@ -69,6 +69,7 @@ SENPAI_ISO_ARCH="x86_64"
 SENPAI_ISO_NAME="SENPAI-${SENPAI_ISO_VERSION}-${SENPAI_ISO_RELEASE}-${SENPAI_ISO_ARCH}.iso"
 SENPAI_ISO_DIR="./build"
 SENPAI_ISO="${SENPAI_ISO_DIR}/${SENPAI_ISO_NAME}"
+SENPAI_SHA="${SENPAI_ISO}.sha256sum"
 
 # Those are the flags used to rebuild the ISO image
 XORRISO_FLAGS="-as mkisofs \
@@ -106,7 +107,7 @@ fi
 # Check if the ISO exists
 if [ ! -f ${ALMA_LOCAL} ]; then
 	echo -e "${TEXT_INFO} Downloading the upstream AlmaLinux ISO"
-	curl -o ${ALMA_LOCAL} ${ALMA_URL}
+	curl -o ${ALMA_LOCAL} ${ALMA_URL} >> ${LOGFILE}
 	if [ $? -ne 0 ]; then
 		echo -e "${TEXT_FAIL} Failed to download the upstream AlmaLinux ISO"
 		rm -rf ${TMPDIR}
@@ -133,7 +134,7 @@ fi
 
 
 # Extract the AlmaLinux ISO to the temporary directory
-xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT}
+xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT} >> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Failed to extract AlmaLinux ISO"
 	rm -rf ${TMPDIR}
@@ -160,12 +161,15 @@ fi
 if [ ! -d ${SENPAI_ISO_DIR} ]; then
 	echo -e "${TEXT_INFO} Creating the build folder"
         mkdir ${SENPAI_ISO_DIR}
+else
+	echo -e "${TEXT_INFO} Detected existing build folder. Cleaning up"
+	rm -rf ${SENPAI_ISO_DIR}/*
 fi
 
 
 
 # Rebuild a bootable ISO
-xorriso ${XORRISO_FLAGS}
+xorriso ${XORRISO_FLAGS} >> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_INFO} Couldn't build a SENPAI ISO"
 	rm -rf ${TMPDIR}
@@ -175,7 +179,7 @@ fi
 
 
 # Compute the new ISO's checksum
-sha256sum ${SENPAI_ISO} > ${SENPAI_ISO}.sha256sum
+sha256sum ${SENPAI_ISO} > ${SENPAI_SHA}
 
 
 
