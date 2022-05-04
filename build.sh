@@ -78,7 +78,7 @@ XORRISO_FLAGS="-as mkisofs \
 		-boot-load-size 4 \
 		-boot-info-table \
 		-eltorito-alt-boot \
-		-e boot/grub/efi.img \
+		-e EFI/BOOT/grubx64.efi \
 		-no-emul-boot \
 		-isohybrid-gpt-basdat \
 		-o ${SENPAI_ISO} \
@@ -109,6 +109,7 @@ if [ ! -f ${ALMA_LOCAL} ]; then
 	curl -o ${ALMA_LOCAL} ${ALMA_URL}
 	if [ $? -ne 0 ]; then
 		echo -e "${TEXT_FAIL} Failed to download the upstream AlmaLinux ISO"
+		rm -rf ${TMPDIR}
 		exit 255
 	else
 		echo -e "${TEXT_SUCC} Downloaded the upstream AlmaLinux ISO"
@@ -123,6 +124,7 @@ fi
 mkdir ${NEW_ISO_ROOT}
 if [ $? -ne 0 ]; then
         echo -e "${TEXT_FAIL} Failed to create new ISO root directory"
+	rm -rf ${TMPDIR}
         exit 255
 else
         echo -e "${TEXT_SUCC} Created new ISO root directory"
@@ -134,6 +136,7 @@ fi
 xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Failed to extract AlmaLinux ISO"
+	rm -rf ${TMPDIR}
 	exit 255
 else
 	echo -e "${TEXT_SUCC} Extracted the AlmaLinux ISO"
@@ -145,6 +148,7 @@ fi
 cp -r ${ISO_PATCH_PATH}/* ${NEW_ISO_ROOT}/
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Failed to patch the AlmaLinux ISO"
+	rm -rf ${TMPDIR}
 	exit 255
 else
 	echo -e "${TEXT_SUCC} Patched the AlmaLinux ISO"
@@ -162,3 +166,19 @@ fi
 
 # Rebuild a bootable ISO
 xorriso ${XORRISO_FLAGS}
+if [ $? -ne 0 ]; then
+	echo -e "${TEXT_INFO} Couldn't build a SENPAI ISO"
+	rm -rf ${TMPDIR}
+	exit 255
+fi
+
+
+
+# Compute the new ISO's checksum
+sha256sum ${SENPAI_ISO} > ${SENPAI_ISO}.sha256sum
+
+
+
+# We're done! Let's clean up
+echo -e "${TEXT_SUCC} Successfully built SENPAI ISO. Cleaning up."
+rm -rf ${TMPDIR}
