@@ -31,7 +31,7 @@ rootpw root
 user --name=senpai --password=senpai
 
 # Select the following packages for installation
-repo --name=senpaimd --baseurl=file:///run/install/repo/repos/senpaimd
+repo --name=senpaimd --baseurl=file:///run/install/SENPAI
 %packages --excludedocs
 @^minimal
 @core
