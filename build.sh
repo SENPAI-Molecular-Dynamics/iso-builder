@@ -116,7 +116,7 @@ fi
 # Check if the ISO exists
 if [ ! -f ${ALMA_LOCAL} ]; then
 	echo -e "${TEXT_INFO} Downloading the upstream AlmaLinux ISO"
-	curl -o ${ALMA_LOCAL} ${ALMA_URL} >> ${LOGFILE}
+	curl -o ${ALMA_LOCAL} ${ALMA_URL} &>> ${LOGFILE}
 	if [ $? -ne 0 ]; then
 		echo -e "${TEXT_FAIL} Failed to download the upstream AlmaLinux ISO"
 		rm -rf ${TMPDIR}
