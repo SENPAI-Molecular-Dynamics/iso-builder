@@ -95,7 +95,7 @@ MKISOFS_FLAGS="-o ${SENPAI_ISO} \
 
 
 ####
-####
+#### VARIABLES
 ####
 
 
@@ -173,6 +173,18 @@ sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/isolinux/isoli
 sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
+
+
+
+# Regenerate the repodata information for the senpaimd repo on disk
+createrepo ${NEW_ISO_ROOT}/senpaimd
+if [ $? -ne 0 ]; then
+	echo -e "${TEXT_FAIL} Couldn't generate senpaimd repodata"
+	rm -rf ${TMPDIR}
+	exit 255
+else
+	echo -e "${TEXT_SUCC} Generated senpaimd repodata"
+fi
 
 
 
