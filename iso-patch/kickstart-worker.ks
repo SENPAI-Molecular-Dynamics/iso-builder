@@ -60,5 +60,3 @@ senpai
 
 # Enable the following services
 services --enable=sshd
-
-%end
