@@ -4,11 +4,19 @@
 
 # Install locally, from CLI
 # (it's fast)
+text
 cdrom
-graphical
+bootloader --append="rhgb quiet crashkernel=auto"
 
 # Automatically accept EULA
 eula --agreed
+
+# Reboot after install
+# Don't go graphical
+# Don't start the first-boot setup thing
+reboot
+skipx
+firstboot --disable
 
 # Default basic partitions
 # (and setup LVM)
@@ -19,27 +27,28 @@ autopart --type=lvm
 
 # Locale
 lang en_US.UTF-8
-timezone Etc/UTC
+keyboard us
+timezone Etc/UTC --isUtc
+
+# Enable SELinux
+selinux --enforcing
 
 # Enable DHCP, set hostname
 # Allow SSH and SENPAI through the firewall (SENPAI uses port 1337)
 network  --bootproto=dhcp --device=enp0s3 --onboot=on --activate --hostname=worker.sen
-firewall --enable --ssh --port=1337
+firewall --enabled --ssh --port=1337
 
 # User config
+auth --passalgo=sha512 --useshadow
 rootpw root
 user --name=senpai --password=senpai
 
 # Select the following packages for installation
 repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senpaimd
 %packages --excludedocs
-@^Infrastructure Server
+@^minimal-environment
+@standard
 senpai
-%end
-
-# Pre-installation script
-%pre --erroronfail
-# Well... there's nothing to do (yet)
 %end
 
 # Post-installation script
@@ -50,9 +59,6 @@ senpai
 %end
 
 # Enable the following services
-services --enable=auditd
 services --enable=sshd
 
-%anaconda
-# Nothing to do here either (yet)
 %end
