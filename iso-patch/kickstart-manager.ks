@@ -5,7 +5,7 @@
 # Install locally, from CLI
 # (it's fast)
 cdrom
-cmdline
+graphical
 
 # Automatically accept EULA
 eula --agreed
@@ -31,7 +31,7 @@ rootpw root
 user --name=senpai --password=senpai
 
 # Select the following packages for installation
-repo --name=senpaimd --baseurl=file:///run/install/SENPAI
+repo --name=senpaimd --baseurl=file:///run/install/repo/senpaimd
 %packages --excludedocs
 @^minimal
 @core
