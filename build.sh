@@ -219,4 +219,4 @@ sha256sum ${SENPAI_ISO} > ${SENPAI_SHA}
 # We're done! Let's clean up
 echo -e "${TEXT_SUCC} Script succeeded. Cleaning up."
 rm -rf ${TMPDIR}
-echo "===Buildlog===" > ${LOGFILE}
+echo "===Buildlog===" >> ${LOGFILE}
