@@ -143,7 +143,7 @@ fi
 
 
 # Extract the AlmaLinux ISO to the temporary directory
-xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT} >> ${LOGFILE}
+xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Failed to extract AlmaLinux ISO"
 	rm -rf ${TMPDIR}
@@ -177,7 +177,7 @@ sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.
 
 
 # Regenerate the repodata information for the senpaimd repo on disk
-createrepo ${NEW_ISO_ROOT}/senpaimd
+createrepo ${NEW_ISO_ROOT}/senpaimd &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Couldn't generate senpaimd repodata"
 	rm -rf ${TMPDIR}
@@ -200,7 +200,7 @@ fi
 
 
 # Rebuild a bootable ISO
-mkisofs ${MKISOFS_FLAGS} >> ${LOGFILE}
+mkisofs ${MKISOFS_FLAGS} >> ${LOGFILE} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Couldn't build a SENPAI ISO"
 	rm -rf ${TMPDIR}
@@ -212,7 +212,7 @@ fi
 
 
 # Run isohybrid
-isohybrid --uefi ${SENPAI_ISO} >> ${LOGFILE}
+isohybrid --uefi ${SENPAI_ISO} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -e "${TEXT_FAIL} Couldn't make ISO bootable"
 	rm -rf ${TMPDIR}
