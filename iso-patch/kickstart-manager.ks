@@ -33,8 +33,7 @@ user --name=senpai --password=senpai
 # Select the following packages for installation
 repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senpaimd
 %packages --excludedocs
-@^minimal
-@core
+@^Infrastructure Server
 senpai
 %end
 
