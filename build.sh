@@ -13,6 +13,9 @@
 
 
 
+# Resets the line
+LINE_RESET='\e[2K\r'
+
 # Terminal escape codes to color text
 TEXT_GREEN='\e[032m'
 TEXT_YELLOW='\e[33m'
@@ -106,7 +109,9 @@ echo "===Buildlog===" > ${LOGFILE}
 
 
 # Check if the local AlmaLinux directory exists
+echo -n -e "${TEXT_INFO} Checking if the local AlmaLinux directory exists..."
 if [ ! -d ${ALMA_LOCAL_DIR} ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_INFO} Local AlmaLinux directory doesn't exist: creating ${ALMA_LOCAL_DIR}"
 	mkdir ${ALMA_LOCAL_DIR}
 fi
@@ -114,53 +119,67 @@ fi
 
 
 # Check if the ISO exists
+echo -n -e "${TEXT_INFO} Checking if the AlmaLinux ISO has already been downloaded..."
 if [ ! -f ${ALMA_LOCAL} ]; then
-	echo -e "${TEXT_INFO} Downloading the upstream AlmaLinux ISO"
+	echo -n -e "${LINE_RESET}"
+	echo -n -e "${TEXT_INFO} Downloading the upstream AlmaLinux ISO"
 	curl -o ${ALMA_LOCAL} ${ALMA_URL} &>> ${LOGFILE}
 	if [ $? -ne 0 ]; then
+		echo -n -e "${LINE_RESET}"
 		echo -e "${TEXT_FAIL} Failed to download the upstream AlmaLinux ISO"
 		rm -rf ${TMPDIR}
 		exit 255
 	else
+		echo -n -e "${LINE_RESET}"
 		echo -e "${TEXT_SUCC} Downloaded the upstream AlmaLinux ISO"
 	fi
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_INFO} Using previously downloaded AlmaLinux ISO"
 fi
 
 
 
 # Create the new ISO root dir in the tmpdir
+echo -n -e "${TEXT_INFO} Creating a new ISO root directory"
 mkdir ${NEW_ISO_ROOT}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
         echo -e "${TEXT_FAIL} Failed to create new ISO root directory"
 	rm -rf ${TMPDIR}
         exit 255
 else
+	echo -n -e "${LINE_RESET}"
         echo -e "${TEXT_SUCC} Created new ISO root directory"
 fi
 
 
 
 # Extract the AlmaLinux ISO to the temporary directory
+echo -n -e "${TEXT_INFO} Extracting the AlmaLinux ISO..."
 xorriso -osirrox on -indev ${ALMA_LOCAL} -extract / ${NEW_ISO_ROOT} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Failed to extract AlmaLinux ISO"
 	rm -rf ${TMPDIR}
 	exit 255
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Extracted the AlmaLinux ISO"
 fi
 
 
 
 # Patch the ISO
+echo -n -e "${TEXT_INFO} Patching the ISO..."
 cp -r ${ISO_PATCH_PATH}/* ${NEW_ISO_ROOT}/
 if [ $? -ne 0 ]; then
+	echo -n 0e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Failed to patch the AlmaLinux ISO"
 	rm -rf ${TMPDIR}
 	exit 255
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Patched the AlmaLinux ISO"
 fi
 
@@ -177,22 +196,28 @@ sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.
 
 
 # Regenerate the repodata information for the senpaimd repo on disk
+echo -n -e "${TEXT_INFO} Generating SENPAI MD repodata..."
 createrepo ${NEW_ISO_ROOT}/senpaimd &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Couldn't generate senpaimd repodata"
 	rm -rf ${TMPDIR}
 	exit 255
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Generated senpaimd repodata"
 fi
 
 
 
 # Check if the build folder exists
+echo -n -e "${TEXT_INFO} Checking if the build folder exists..."
 if [ ! -d ${SENPAI_ISO_DIR} ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_INFO} Build folder doesn't exist. Creating"
         mkdir ${SENPAI_ISO_DIR}
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_INFO} Detected existing build folder. Cleaning up"
 	rm -rf ${SENPAI_ISO_DIR}/*
 fi
@@ -200,36 +225,45 @@ fi
 
 
 # Rebuild a bootable ISO
+echo -n -e "${TEXT_INFO} Building SENPAI ISO..."
 mkisofs ${MKISOFS_FLAGS} >> ${LOGFILE} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Couldn't build a SENPAI ISO"
 	rm -rf ${TMPDIR}
 	exit 255
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Built the SENPAI ISO"
 fi
 
 
 
 # Run isohybrid
+echo -n -e "${TEXT_INFO} Making the ISO bootable..."
 isohybrid --uefi ${SENPAI_ISO} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Couldn't make ISO bootable"
 	rm -rf ${TMPDIR}
 	exit 255
 else
+	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Made the ISO bootable"
 fi
 
 
 
 # Compute the new ISO's checksum
+echo -n -e "${TEXT_INFO} Computing the ISO checksum..."
 sha256sum ${SENPAI_ISO} > ${SENPAI_SHA}
 if [ $? -ne 0 ]; then
+	echo -n -e "${LINE_RESET}"
         echo -e "${TEXT_FAIL} Couldn't compute the SHA256"
         rm -rf ${TMPDIR}
         exit 255
 else
+	echo -n -e "${LINE_RESET}"
         echo -e "${TEXT_SUCC} Computed the SHA256"
 fi
 
