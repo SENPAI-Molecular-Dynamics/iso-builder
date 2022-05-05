@@ -6,11 +6,11 @@ The scripts have been tested on **Alma Linux 8.5**.
 
 ## Requirements
 
-The build process requires `createrepo`, `xorriso` and `syslinux` from EPEL:
+The build process requires `createrepo`, `curl`, `xorriso` and `syslinux` from EPEL:
 
 `# dnf install epel-release && dnf update`
 
-`# dnf install xorriso syslinux createrepo`
+`# dnf install xorriso syslinux createrepo curl`
 
 ## Getting sources
 
