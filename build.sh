@@ -62,6 +62,10 @@ TMPDIR=`mktemp -d`               # The temporary work directory
 NEW_ISO_ROOT="${TMPDIR}/isoroot" # The root of the new ISO to build. Subdir of TMPDIR
 ISO_PATCH_PATH="./iso-patch"     # The content of the directory will be copied to the root of the ISO before building
 
+# Information regarding the ISO patch to apply
+PATH_KS_WORKER="kickstart-worker.ks"
+PATH_KS_MANAGER="kickstart-manager.ks"
+
 # Information regarding the to-be-built SENPAI ISO
 SENPAI_ISO_VERSION="8.5"
 SENPAI_ISO_RELEASE="1"
@@ -159,6 +163,16 @@ if [ $? -ne 0 ]; then
 else
 	echo -e "${TEXT_SUCC} Patched the AlmaLinux ISO"
 fi
+
+
+
+# Customize the patch
+sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
+sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
+sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
+sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
+sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
+sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 
 
 
