@@ -66,24 +66,29 @@ ISO_PATCH_PATH="./iso-patch"     # The content of the directory will be copied t
 SENPAI_ISO_VERSION="8.5"
 SENPAI_ISO_RELEASE="1"
 SENPAI_ISO_ARCH="x86_64"
-SENPAI_ISO_NAME="SENPAI-${SENPAI_ISO_VERSION}-${SENPAI_ISO_RELEASE}-${SENPAI_ISO_ARCH}.iso"
+SENPAI_ISO_LABEL="SENPAI"
+SENPAI_ISO_NAME="${SENPAI_ISO_LABEL}-${SENPAI_ISO_VERSION}-${SENPAI_ISO_RELEASE}-${SENPAI_ISO_ARCH}.iso"
 SENPAI_ISO_DIR="./build"
 SENPAI_ISO="${SENPAI_ISO_DIR}/${SENPAI_ISO_NAME}"
 SENPAI_SHA="${SENPAI_ISO}.sha256sum"
 
 # Those are the flags used to rebuild the ISO image
-XORRISO_FLAGS="-as mkisofs \
-		-c isolinux/boot.cat \
-		-b isolinux/isolinux.bin \
-		-no-emul-boot \
-		-boot-load-size 4 \
-		-boot-info-table \
-		-eltorito-alt-boot \
-		-e EFI/BOOT/grubx64.efi \
-		-no-emul-boot \
-		-isohybrid-gpt-basdat \
-		-o ${SENPAI_ISO} \
-		${NEW_ISO_ROOT}"
+MKISOFS_FLAGS="-o ${SENPAI_ISO} \
+	-b isolinux/isolinux.bin \
+	-c isolinux/boot.cat \
+	--no-emul-boot \
+	--boot-load-size 4 \
+	--boot-info-table \
+	-eltorito-alt-boot \
+	-e images/efiboot.img \
+	-graft-points EFI/BOOT=${NEW_ISO_ROOT}/EFI/BOOT images/efiboot.img=${NEW_ISO_ROOT}/images/efiboot.img \
+	-no-emul-boot \
+        -J \
+	-R \
+	-V ${SENPAI_ISO_LABEL} \
+	${NEW_ISO_ROOT}"
+
+
 
 ####
 ####
@@ -159,7 +164,7 @@ fi
 
 # Check if the build folder exists
 if [ ! -d ${SENPAI_ISO_DIR} ]; then
-	echo -e "${TEXT_INFO} Creating the build folder"
+	echo -e "${TEXT_INFO} Build folder doesn't exist. Creating"
         mkdir ${SENPAI_ISO_DIR}
 else
 	echo -e "${TEXT_INFO} Detected existing build folder. Cleaning up"
@@ -169,11 +174,25 @@ fi
 
 
 # Rebuild a bootable ISO
-xorriso ${XORRISO_FLAGS} >> ${LOGFILE}
+mkisofs ${MKISOFS_FLAGS} >> ${LOGFILE}
 if [ $? -ne 0 ]; then
-	echo -e "${TEXT_INFO} Couldn't build a SENPAI ISO"
+	echo -e "${TEXT_FAIL} Couldn't build a SENPAI ISO"
 	rm -rf ${TMPDIR}
 	exit 255
+else
+	echo -e "${TEXT_SUCC} Built the SENPAI ISO"
+fi
+
+
+
+# Run isohybrid
+isohybrid --uefi ${SENPAI_ISO} >> ${LOGFILE}
+if [ $? -ne 0 ]; then
+	echo -e "${TEXT_FAIL} Couldn't make ISO bootable"
+	rm -rf ${TMPDIR}
+	exit 255
+else
+	echo -e "${TEXT_SUCC} Made the ISO bootable"
 fi
 
 
@@ -184,5 +203,6 @@ sha256sum ${SENPAI_ISO} > ${SENPAI_SHA}
 
 
 # We're done! Let's clean up
-echo -e "${TEXT_SUCC} Successfully built SENPAI ISO. Cleaning up."
+echo -e "${TEXT_SUCC} Script succeeded. Cleaning up."
 rm -rf ${TMPDIR}
+echo "===Buildlog===" > ${LOGFILE}
