@@ -39,7 +39,6 @@ network  --bootproto=dhcp --device=enp0s3 --onboot=on --activate --hostname=work
 firewall --enabled --ssh --port=1337
 
 # User config
-auth --passalgo=sha512 --useshadow
 rootpw root
 user --name=senpai --password=senpai
 
