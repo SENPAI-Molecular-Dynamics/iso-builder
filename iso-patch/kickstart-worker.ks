@@ -48,6 +48,7 @@ repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senp
 @^minimal-environment
 @standard
 senpai
+senpai-repo
 %end
 
 # Post-installation script
