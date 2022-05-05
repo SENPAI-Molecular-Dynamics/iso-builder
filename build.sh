@@ -225,6 +225,13 @@ fi
 
 # Compute the new ISO's checksum
 sha256sum ${SENPAI_ISO} > ${SENPAI_SHA}
+if [ $? -ne 0 ]; then
+        echo -e "${TEXT_FAIL} Couldn't compute the SHA256"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -e "${TEXT_SUCC} Computed the SHA256"
+fi
 
 
 
