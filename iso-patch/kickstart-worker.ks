@@ -84,7 +84,7 @@ echo 'kernel.modules_disabled = 1' > /etc/sysctl.d/ANSSI-BP-028-R24.conf        
 sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config # Addresses ANSSI-BP-028-R29
 sed -i 's/#ClientAliveCountMax/ClientAliveCountMax/g' /etc/ssh/sshd_config      # Addresses ANSSI-BP-028-R29
 chown root:wheel /usr/bin/sudo                                                  # Addresses ANSSI-BP-028-R57
-sudo setsebool -P deny_execmem off                                              # Addresses ANSSI-BP-028-R67
+setsebool -P deny_execmem off                                                   # Addresses ANSSI-BP-028-R67
 %end
 
 # Enable the following services
