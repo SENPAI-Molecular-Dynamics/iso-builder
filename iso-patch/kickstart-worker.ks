@@ -65,9 +65,9 @@ senpai
 %post --erroronfail --log=/home/admin/ks-post.log
 /bin/passwd --expire root
 /bin/passwd --expire admin
-#/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml %SCAP_CONTENT%
-#/bin/oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
-#/bin/rm /home/admin/scap-results.xml
+/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml %SCAP_CONTENT%
+/bin/oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
+/bin/rm /home/admin/scap-results.xml
 %end
 
 # Enable the following services

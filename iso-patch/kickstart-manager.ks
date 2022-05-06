@@ -65,8 +65,8 @@ senpai-manager
 %post --erroronfail
 /bin/passwd --expire root
 /bin/passwd --expire admin
-#/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
-#/bin/oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
+/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
+/bin/oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
 /bin/rm /home/admin/scap-results.xml
 %end
 
