@@ -54,10 +54,12 @@ senpai-manager
 %end
 
 # Post-installation script
-%post --erroronfail
+%post --erroronfail --log=/home/admin/ks-post.log
 /bin/passwd --expire root
 /bin/passwd --expire admin
-/bin/oscap xccdf eval --remediate --progress --profile %SCAP_PROFILE% --results-arf /home/admin/arf.xml --report /home/admin/report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
+/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
+/bin/oscap generate report /home/admin/scap-results.xml /home/admin/scap-report.html
+/bin/rm /home/admin/scap-results.xml
 %end
 
 # Enable the following services
