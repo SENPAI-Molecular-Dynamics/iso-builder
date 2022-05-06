@@ -25,9 +25,10 @@ firstboot --disable
 zerombr
 ignoredisk --only-use=sda
 clearpart --all --initlabel --drives=sda
-part /boot --fstype fat32 --ondisk=sda --size=1024
-part swap --ondisk=sda --size=8192
-part pv.01 --size=1 --ondisk=sda --grow
+part	/boot 		--fstype=ext4 --ondisk=sda --size=512
+part	/boot/efi	--fstype=vfat --ondisk=sda --size=512
+part	swap --ondisk=sda --size=8192
+part	pv.01 --size=1 --ondisk=sda --grow
 volgroup vg_root pv.01
 logvol  /		--vgname=vg_root --size=8192 --name=lv_root
 logvol	/home		--vgname=vg_root --size=8192 --name=lv_home
@@ -37,6 +38,7 @@ logvol  /var		--vgname=vg_root --size=8192 --name=lv_var
 logvol	/var/tmp	--vgname=vg_root --size=8192 --name=lv_var_tmp
 logvol  /var/log	--vgname=vg_root --size=8192 --name=lv_var_log
 logvol  /var/log/audit	--vgname=vg_root --size=8192 --name=lv_var_log_audit
+logvol	/srv		--vgname=vg_root --size=8192 --name=lv_srv
 logvol  /opt    	--vgname=vg_root --size=1 --grow --name=lv_opt
 
 # Locale
