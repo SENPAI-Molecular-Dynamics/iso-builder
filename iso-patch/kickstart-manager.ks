@@ -76,8 +76,8 @@ senpai-manager
 
 # Post-installation script
 %post --erroronfail
-/bin/passwd --expire root
-/bin/passwd --expire admin
+passwd --expire root
+passwd --expire admin
 systemctl enable dnf-automatic.timer                                            # Addresses ANSSI-BP-028-R08
 echo 'kernel.modules_disabled = 1' > /etc/sysctl.d/ANSSI-BP-028-R24.conf        # Addresses ANSSI-BP-028-R24
 sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config # Addresses ANSSI-BP-028-R29
