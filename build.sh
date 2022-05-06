@@ -74,10 +74,13 @@ PATH_KS_MANAGER="kickstart-manager.ks"
 REPO_PATH_SENPAI="${NEW_ISO_ROOT}/senpaimd"
 REPO_PATH_EXTRA="${NEW_ISO_ROOT}/senpai-iso-extra"
 PACKAGES_TO_ADD_SENPAI="senpai senpai-strelitzia senpai-repo"
-PACKAGES_TO_ADD_EXTRA="scap-security-guide GConf2 openscap openscap-scanner xmlsec1 xmlsec1-openssl aide"
+PACKAGES_TO_ADD_EXTRA="scap-security-guide GConf2 openscap openscap-scanner xmlsec1 xmlsec1-openssl aide rsyslog rsyslog-gnutls"
 
 # OpenSCAP / Compliance As Code (CAC) profile to apply
 # Here, we're getting SENPAI compliant to ANSSI-BP-028-HIGH.
+SCAP_CONTENT="/usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml"
+SCAP_ID_DATASTREAM="scap_org.open-scap_datastream_from_xccdf_ssg-almalinux8-xccdf-1.2.xml"
+SCAP_ID_XCCDF="scap_org.open-scap_cref_ssg-almalinux8-xccdf-1.2.xml"
 SCAP_PROFILE="xccdf_org.ssgproject.content_profile_anssi_bp28_high"
 
 # Information regarding the to-be-built SENPAI ISO
@@ -207,9 +210,17 @@ sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/EFI/BOOT/gru
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 
-echo -e "${TEXT_INFO} Configuring kickstarts..."
+echo -e "${TEXT_INFO} Configuring worker kickstart..."
 sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
+sed -i "s/%SCAP_CONTENT%/${SCAP_CONTENT}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
+sed -i "s/%SCAP_ID_DATASTREAM%/${SCAP_ID_DATASTREAM}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
+sed -i "s/%SCAP_ID_XCCDF%/${SCAP_ID_XCCDF}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
+
+echo -e "${TEXT_INFO} Configuring manager kickstart..."
 sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
+sed -i "s/%SCAP_CONTENT%/${SCAP_CONTENT}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
+sed -i "s/%SCAP_ID_DATASTREAM%/${SCAP_ID_DATASTREAM}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
+sed -i "s/%SCAP_ID_XCCDF%/${SCAP_ID_XCCDF}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
 
 
 
