@@ -58,7 +58,7 @@ senpai
 #!/bin/sh
 /bin/passwd --expire root
 /bin/passwd --expire admin
-/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --report /home/admin/report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
+/bin/oscap xccdf eval --remediate --progress --profile %SCAP_PROFILE% --report /home/admin/report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
 %end
 
 # Enable the following services
