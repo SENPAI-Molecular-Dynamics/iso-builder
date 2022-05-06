@@ -25,21 +25,18 @@ firstboot --disable
 zerombr
 ignoredisk --only-use=sda
 clearpart --all --initlabel --drives=sda
-part	/boot 		--fstype=ext4 --ondisk=sda --size=512
-part	/boot/efi	--fstype=vfat --ondisk=sda --size=512
-part	swap --ondisk=sda --size=8192
-part	pv.01 --size=1 --ondisk=sda --grow
-volgroup vg_root pv.01
-logvol  /		--vgname=vg_root --size=8192 --name=lv_root
-logvol	/home		--vgname=vg_root --size=8192 --name=lv_home
-logvol  /tmp    	--vgname=vg_root --size=8192 --name=lv_tmp
-logvol  /usr    	--vgname=vg_root --size=8192 --name=lv_usr
-logvol  /var		--vgname=vg_root --size=8192 --name=lv_var
-logvol	/var/tmp	--vgname=vg_root --size=8192 --name=lv_var_tmp
-logvol  /var/log	--vgname=vg_root --size=8192 --name=lv_var_log
-logvol  /var/log/audit	--vgname=vg_root --size=8192 --name=lv_var_log_audit
-logvol	/srv		--vgname=vg_root --size=8192 --name=lv_srv
-logvol  /opt    	--vgname=vg_root --size=1 --grow --name=lv_opt
+part    /boot           --fstype=ext4 --ondisk=sda --size=512
+part    /boot/efi       --fstype=vfat --ondisk=sda --size=512
+part  /               --fstype=ext4 --ondisk=sda --size=8192
+part  /home           --fstype=ext4 --ondisk=sda --size=1024
+part  /tmp            --fstype=ext4 --ondisk=sda --size=102
+part  /usr            --fstype=ext4 --ondisk=sda --size=8192
+part  /var            --fstype=ext4 --ondisk=sda --size=8192
+part  /var/tmp        --fstype=ext4 --ondisk=sda --size=4096
+part  /var/log        --fstype=ext4 --ondisk=sda --size=4096
+part  /var/log/audit  --fstype=ext4 --ondisk=sda --size=4096
+part  /opt            --fstype=ext4 --ondisk=sda --size=1024
+part  /srv            --fstype=ext4 --ondisk=sda --size=1 --grow
 
 # Locale
 lang en_US.UTF-8
@@ -81,9 +78,6 @@ senpai
 %post --erroronfail --log=/home/admin/ks-post.log
 /bin/passwd --expire root
 /bin/passwd --expire admin
-/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --results /home/admin/scap-results.xml %SCAP_CONTENT%
-/bin/oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
-/bin/rm /home/admin/scap-results.xml
 %end
 
 # Enable the following services
