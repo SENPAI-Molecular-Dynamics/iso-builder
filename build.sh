@@ -74,7 +74,7 @@ PATH_KS_MANAGER="kickstart-manager.ks"
 REPO_PATH_SENPAI="${NEW_ISO_ROOT}/senpaimd"
 REPO_PATH_EXTRA="${NEW_ISO_ROOT}/senpai-iso-extra"
 PACKAGES_TO_ADD_SENPAI="senpai senpai-strelitzia senpai-repo"
-PACKAGES_TO_ADD_EXTRA="scap-security-guide"
+PACKAGES_TO_ADD_EXTRA="scap-security-guide GConf2 openscap openscap-scanner xmlsec1 xmlsec1-openssl"
 
 # Information regarding the to-be-built SENPAI ISO
 SENPAI_ISO_VERSION="8.5"
