@@ -197,14 +197,17 @@ fi
 
 
 # Customize the patch
+echo -e "${TEXT_INFO} Configuring MBR/BIOS boot..."
 sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
 
+echo -e "${TEXT_INFO} Configuring GPT/UEFI boot..."
 sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 
+echo -e "${TEXT_INFO} Configuring kickstarts..."
 sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
 sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
 
