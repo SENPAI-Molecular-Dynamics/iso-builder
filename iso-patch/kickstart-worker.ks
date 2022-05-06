@@ -55,7 +55,6 @@ senpai
 
 # Post-installation script
 %post --erroronfail
-#!/bin/sh
 /bin/passwd --expire root
 /bin/passwd --expire admin
 /bin/oscap xccdf eval --remediate --progress --profile %SCAP_PROFILE% --results-arf /home/admin/arf.xml --report /home/admin/report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
