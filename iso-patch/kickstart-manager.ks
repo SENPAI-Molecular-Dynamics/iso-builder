@@ -35,7 +35,7 @@ selinux --enforcing
 
 # Enable DHCP, set hostname
 # Allow SSH and SENPAI through the firewall (SENPAI uses port 1337)
-network  --bootproto=dhcp --device=enp0s3 --onboot=on --activate --hostname=worker.sen
+network  --bootproto=dhcp --device=enp0s3 --onboot=on --activate --hostname=manager.sen
 firewall --enabled --ssh --port=1337
 
 # User config
@@ -47,8 +47,8 @@ repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senp
 %packages --excludedocs
 @^minimal-environment
 @standard
+scap-security-guide
 senpai-manager
-senpai-repo
 %end
 
 # Post-installation script

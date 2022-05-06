@@ -60,7 +60,8 @@ ALMA_LOCAL_DIR="./AlmaLinux"
 ALMA_LOCAL_NAME="AlmaLinux-${ALMA_RELEASE}-${ALMA_ARCH}-${ALMA_FLAVOR}.iso"
 ALMA_LOCAL="${ALMA_LOCAL_DIR}/${ALMA_LOCAL_NAME}"
 
-LOGFILE="./buildlog.txt"         # Where this script will log stuff
+WORKING_DIR=`pwd`
+LOGFILE="${WORKING_DIR}/buildlog.txt"         # Where this script will log stuff
 TMPDIR=`mktemp -d`               # The temporary work directory
 NEW_ISO_ROOT="${TMPDIR}/isoroot" # The root of the new ISO to build. Subdir of TMPDIR
 ISO_PATCH_PATH="./iso-patch"     # The content of the directory will be copied to the root of the ISO before building
@@ -68,6 +69,12 @@ ISO_PATCH_PATH="./iso-patch"     # The content of the directory will be copied t
 # Information regarding the ISO patch to apply
 PATH_KS_WORKER="kickstart-worker.ks"
 PATH_KS_MANAGER="kickstart-manager.ks"
+
+# Repositories to create on-disk
+REPO_PATH_SENPAI="${NEW_ISO_ROOT}/senpaimd"
+REPO_PATH_EXTRA="${NEW_ISO_ROOT}/senpai-iso-extra"
+PACKAGES_TO_ADD_SENPAI="senpai senpai-strelitzia senpai-repo"
+PACKAGES_TO_ADD_EXTRA="scap-security-guide"
 
 # Information regarding the to-be-built SENPAI ISO
 SENPAI_ISO_VERSION="8.5"
@@ -195,9 +202,73 @@ sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.
 
 
 
-# Regenerate the repodata information for the senpaimd repo on disk
+# Create the SENPAI MD on-disk repo
+echo -n -e "${TEXT_INFO} Creating SENPAI MD on-disk repo..."
+mkdir -p ${REPO_PATH_SENPAI}/Packages
+if [ $? -ne 0 ]; then
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_FAIL} Couldn't create SENPAI MD on-disk repo"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_SUCC} Created SENPAI MD on-disk repo"
+fi
+
+
+
+# Create the SENPAI MD extra on-disk repo
+echo -n -e "${TEXT_INFO} Creating SENPAI MD extra on-disk repo..."
+mkdir -p ${REPO_PATH_EXTRA}/Packages
+if [ $? -ne 0 ]; then
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_FAIL} Couldn't create SENPAI MD extra on-disk repo"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_SUCC} Created SENPAI MD extra on-disk repo"
+fi
+
+
+
+# Download the SENPAI packages
+echo -n -e "${TEXT_INFO} Downloading SENPAI MD RPMs..."
+pushd ${REPO_PATH_SENPAI}/Packages &>> ${LOGFILE}
+dnf download ${PACKAGES_TO_ADD_SENPAI} &>> ${LOGFILE}
+if [ $? -ne 0 ]; then
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_FAIL} Couldn't download SENPAI MD RPMs"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_SUCC} Downloaded SENPAI MD RPMs"
+fi
+popd &>> ${LOGFILE}
+
+
+
+# Download the extra packages
+echo -n -e "${TEXT_INFO} Downloading extra RPMs..."
+pushd ${REPO_PATH_EXTRA}/Packages &>> ${LOGFILE}
+dnf download ${PACKAGES_TO_ADD_EXTRA} &>> ${LOGFILE}
+if [ $? -ne 0 ]; then
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_FAIL} Couldn't download extra RPMs"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_SUCC} Downloaded extra RPMs"
+fi
+popd &>> ${LOGFILE}
+
+
+
+# Generate the repodata information for the senpaimd repo on disk
 echo -n -e "${TEXT_INFO} Generating SENPAI MD repodata..."
-createrepo ${NEW_ISO_ROOT}/senpaimd &>> ${LOGFILE}
+createrepo ${REPO_PATH_SENPAI} &>> ${LOGFILE}
 if [ $? -ne 0 ]; then
 	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_FAIL} Couldn't generate senpaimd repodata"
@@ -206,6 +277,21 @@ if [ $? -ne 0 ]; then
 else
 	echo -n -e "${LINE_RESET}"
 	echo -e "${TEXT_SUCC} Generated senpaimd repodata"
+fi
+
+
+
+# Generate the repodata information for the senpai-iso-extra repo
+echo -n -e "${TEXT_INFO} Generating SENPAI ISO extra repodata..."
+createrepo ${REPO_PATH_EXTRA} &>> ${LOGFILE}
+if [ $? -ne 0 ]; then
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_FAIL} Couldn't generate SENPAI ISO extra repodata"
+        rm -rf ${TMPDIR}
+        exit 255
+else
+        echo -n -e "${LINE_RESET}"
+        echo -e "${TEXT_SUCC} Generated SENPAI ISO extra repodata"
 fi
 
 
