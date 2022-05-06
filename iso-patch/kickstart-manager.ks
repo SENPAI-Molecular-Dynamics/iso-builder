@@ -18,12 +18,26 @@ reboot
 skipx
 firstboot --disable
 
-# Default basic partitions
-# (and setup LVM)
+# This partitioning is compliant with
+# - ANSSI-BP-028-R12
+# - ANSSI-BP-028-R43
+# - ANSSI-BP-028-R47
 zerombr
 ignoredisk --only-use=sda
 clearpart --all --initlabel --drives=sda
-autopart --type=lvm
+part /boot --fstype fat32 --ondisk=sda --size=1024
+part swap --ondisk=sda --size=8192
+part pv.01 --size=1 --ondisk=sda --grow
+volgroup vg_root pv.01
+logvol  /               --vgname=vg_root --size=8192 --name=lv_root
+logvol  /home           --vgname=vg_root --size=8192 --name=lv_home
+logvol  /tmp            --vgname=vg_root --size=8192 --name=lv_tmp
+logvol  /usr            --vgname=vg_root --size=8192 --name=lv_usr
+logvol  /var            --vgname=vg_root --size=8192 --name=lv_var
+logvol  /var/tmp        --vgname=vg_root --size=8192 --name=lv_var_tmp
+logvol  /var/log        --vgname=vg_root --size=8192 --name=lv_var_log
+logvol  /var/log/audit  --vgname=vg_root --size=8192 --name=lv_var_log_audit
+logvol  /opt            --vgname=vg_root --size=1 --grow --name=lv_opt
 
 # Locale
 lang en_US.UTF-8
