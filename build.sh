@@ -76,6 +76,10 @@ REPO_PATH_EXTRA="${NEW_ISO_ROOT}/senpai-iso-extra"
 PACKAGES_TO_ADD_SENPAI="senpai senpai-strelitzia senpai-repo"
 PACKAGES_TO_ADD_EXTRA="scap-security-guide GConf2 openscap openscap-scanner xmlsec1 xmlsec1-openssl aide"
 
+# OpenSCAP / Compliance As Code (CAC) profile to apply
+# Here, we're getting SENPAI compliant to ANSSI-BP-028-HIGH.
+SCAP_PROFILE="xccdf_org.ssgproject.content_profile_anssi_bp28_high"
+
 # Information regarding the to-be-built SENPAI ISO
 SENPAI_ISO_VERSION="8.5"
 SENPAI_ISO_RELEASE="1"
@@ -196,9 +200,13 @@ fi
 sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/isolinux/isolinux.cfg
+
 sed -i "s/%SENPAI_ISO_LABEL%/${SENPAI_ISO_LABEL}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_WORKER%/${PATH_KS_WORKER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
 sed -i "s/%PATH_KS_MANAGER%/${PATH_KS_MANAGER}/g" ${NEW_ISO_ROOT}/EFI/BOOT/grub.cfg
+
+sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_WORKER}
+sed -i "s/%SCAP_PROFILE%/${SCAP_PROFILE}/g" ${NEW_ISO_ROOT}/${PATH_KS_MANAGER}
 
 
 

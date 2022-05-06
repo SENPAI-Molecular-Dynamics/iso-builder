@@ -40,7 +40,7 @@ firewall --enabled --ssh --port=1337
 
 # User config
 rootpw root
-user --name=senpai --password=senpai
+user --name=admin --password=admin -G wheel
 
 # Select the following packages for installation
 repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senpaimd
@@ -58,7 +58,7 @@ senpai
 #!/bin/sh
 /bin/passwd --expire root
 /bin/passwd --expire senpai
-/bin/oscap xccdf eval --remediate --profile xccdf_org.ssgproject.content_profile_anssi_b28_high --report report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
+/bin/oscap xccdf eval --remediate --profile %SCAP_PROFILE% --report /home/admin/report.html /usr/share/xml/scap/ssg/content/ssg-almalinux8-ds.xml
 %end
 
 # Enable the following services
