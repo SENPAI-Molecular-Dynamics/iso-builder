@@ -44,6 +44,7 @@ user --name=senpai --password=senpai
 
 # Select the following packages for installation
 repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senpaimd
+repo --name=senpai-iso-extra --baseurl=file:///run/install/sources/mount-0000-cdrom/senpai-iso-extra
 %packages --excludedocs
 @^minimal-environment
 @standard
