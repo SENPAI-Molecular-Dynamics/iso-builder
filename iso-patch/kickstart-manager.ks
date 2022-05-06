@@ -27,16 +27,16 @@ ignoredisk --only-use=sda
 clearpart --all --initlabel --drives=sda
 part    /boot           --fstype=ext4 --ondisk=sda --size=512
 part    /boot/efi       --fstype=vfat --ondisk=sda --size=512
-part  /               --fstype=ext4 --ondisk=sda --size=8192
-part  /home           --fstype=ext4 --ondisk=sda --size=1024
-part  /tmp            --fstype=ext4 --ondisk=sda --size=102
-part  /usr            --fstype=ext4 --ondisk=sda --size=8192
-part  /var            --fstype=ext4 --ondisk=sda --size=8192
-part  /var/tmp        --fstype=ext4 --ondisk=sda --size=4096
-part  /var/log        --fstype=ext4 --ondisk=sda --size=4096
-part  /var/log/audit  --fstype=ext4 --ondisk=sda --size=4096
-part  /opt            --fstype=ext4 --ondisk=sda --size=1024
-part  /srv            --fstype=ext4 --ondisk=sda --size=1 --grow
+part	/               --fstype=ext4 --ondisk=sda --size=8192
+part	/home           --fstype=ext4 --ondisk=sda --size=1024
+part	/tmp            --fstype=ext4 --ondisk=sda --size=1024
+part	/usr            --fstype=ext4 --ondisk=sda --size=8192
+part	/var            --fstype=ext4 --ondisk=sda --size=8192
+part	/var/tmp        --fstype=ext4 --ondisk=sda --size=4096
+part	/var/log        --fstype=ext4 --ondisk=sda --size=4096
+part	/var/log/audit  --fstype=ext4 --ondisk=sda --size=4096
+part	/opt            --fstype=ext4 --ondisk=sda --size=1024
+part	/srv            --fstype=ext4 --ondisk=sda --size=1 --grow
 
 # Locale
 lang en_US.UTF-8
@@ -78,7 +78,18 @@ senpai-manager
 %post --erroronfail
 /bin/passwd --expire root
 /bin/passwd --expire admin
+systemctl enable dnf-automatic.timer                                            # Addresses ANSSI-BP-028-R08
+echo 'kernel.modules_disabled = 1' > /etc/sysctl.d/ANSSI-BP-028-R24.conf        # Addresses ANSSI-BP-028-R24
+sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config # Addresses ANSSI-BP-028-R29
+sed -i 's/#ClientAliveCountMax/ClientAliveCountMax/g' /etc/ssh/sshd_config      # Addresses ANSSI-BP-028-R29
+chown root:wheel /usr/bin/sudo                                                  # Addresses ANSSI-BP-028-R57
+sudo setsebool -P deny_execmem off                                              # Addresses ANSSI-BP-028-R67
+oscap xccdf eval --profile %SCAP_PROFILE% \
+                      --results /home/admin/scap-results.xml \
+                      %SCAP_CONTENT%
+oscap xccdf generate report /home/admin/scap-results.xml > /home/admin/scap-report.html
+rm -rf /home/admin/scap-results.xml
 %end
 
 # Enable the following services
-services --enable=sshd
+services --enabled=sshd
