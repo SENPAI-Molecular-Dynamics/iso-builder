@@ -40,7 +40,7 @@ firewall --enabled --ssh --port=1337
 
 # User config
 rootpw root
-user --name=admin --password=admin -groups=wheel
+user --name=admin --password=admin --groups=wheel
 
 # Select the following packages for installation
 repo --name=senpaimd --baseurl=file:///run/install/sources/mount-0000-cdrom/senpaimd
